@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import mongoose from "mongoose";
 import userRouter from "./routes/user.route.js";
 import todoRouter from "./routes/todo.route.js";
@@ -17,6 +18,7 @@ mongoose
   });
 
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
