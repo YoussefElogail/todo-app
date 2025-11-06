@@ -6,6 +6,7 @@ import {
   showTodo,
   updateTodo,
 } from "../controllers/todo.controller.js";
+import verifyToken from "../middlewares/verifyToken.js";
 const router = Router();
 
 router.route("/").get(getTodos).post(createTodo);

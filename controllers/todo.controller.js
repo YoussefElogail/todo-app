@@ -2,7 +2,8 @@ import Todo from "../models/todo.models.js";
 import { asyncWrapper } from "../middlewares/asyncWrapper.js";
 
 const getTodos = asyncWrapper(async (req, res) => {
-  const todos = await Todo.find();
+  const user = req.currentUser;
+  const todos = await Todo.find({ user });
   res.status(200).json({
     status: "success",
     data: todos,
@@ -19,7 +20,8 @@ const showTodo = asyncWrapper(async (req, res) => {
 });
 
 const createTodo = asyncWrapper(async (req, res) => {
-  const body = req.body;
+  const user = req.currentUser;
+  const body = { ...req.body, user };
   const newTodo = await Todo.create(body);
   res.status(200).json({
     status: "success",

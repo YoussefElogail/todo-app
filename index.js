@@ -1,7 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import userRouter from "./routes/user.route.js";
 import todoRouter from "./routes/todo.route.js";
+import verifyToken from "./middlewares/verifyToken.js";
 const app = express();
 dotenv.config();
 const port = process.env.PORT;
@@ -19,8 +21,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-
-app.use("/api/todos", todoRouter);
+app.use("/api/users", userRouter);
+app.use("/api/todos", verifyToken, todoRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
