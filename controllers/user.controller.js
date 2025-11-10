@@ -14,22 +14,22 @@ const getUsers = asyncWrapper(async (req, res) => {
 const createUser = asyncWrapper(async (req, res) => {
   const body = req.body;
   const hashedPss = await bcrypt.hash(body.password, 10);
-  const newUser = new User({
+  const user = new User({
     name: body.name,
     email: body.email,
     password: hashedPss,
   });
   const token = generateJWT({
-    name: newUser.name,
-    email: newUser.email,
-    id: newUser._id,
+    name: user.name,
+    email: user.email,
+    id: user._id,
   });
-  newUser.token = token;
-  await newUser.save();
+  user.token = token;
+  await user.save();
   res.status(200).json({
     status: "success",
     data: {
-      newUser,
+      user,
     },
   });
 });
@@ -49,13 +49,51 @@ const login = asyncWrapper(async (req, res) => {
       email: user.email,
       id: user._id,
     });
+    user.token = token;
     return res.status(200).json({
       status: "SUCCESS",
-      data: { token },
+      data: {
+        user,
+      },
     });
   } else {
     res.status(400).json("error");
   }
 });
 
-export { getUsers, createUser, login };
+const uploadImage = asyncWrapper(async (req, res) => {
+  const image = req.file.filename;
+  const { currentUser } = req;
+
+  // احذف exp و iat من الكائن
+  const { exp, iat, ...safeUser } = currentUser;
+
+  const token = generateJWT({
+    ...safeUser,
+    image: `${req.protocol}://localhost:4000/uploads/${image}`,
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user: {
+        ...safeUser,
+        image: `${req.protocol}://localhost:4000/uploads/${image}`,
+        token,
+      },
+    },
+  });
+});
+
+const getMyData = asyncWrapper(async (req, res) => {
+  const { currentUser } = req;
+  console.log(currentUser);
+  res.status(200).json({
+    status: "success",
+    data: {
+      currentUser,
+    },
+  });
+});
+
+export { getUsers, createUser, login, getMyData, uploadImage };

@@ -5,6 +5,12 @@ import mongoose from "mongoose";
 import userRouter from "./routes/user.route.js";
 import todoRouter from "./routes/todo.route.js";
 import verifyToken from "./middlewares/verifyToken.js";
+
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 dotenv.config();
 const port = process.env.PORT;
@@ -19,6 +25,7 @@ mongoose
 
 app.use(express.json());
 app.use(cors());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

@@ -18,6 +18,9 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   token: String,
+  image: {
+    type: String,
+  },
 });
 
 export default mongoose.model("User", userSchema);
